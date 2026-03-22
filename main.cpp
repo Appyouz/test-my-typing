@@ -78,8 +78,7 @@ while(true){
     }
   }
   int wpm = 0;
-  // wpm = std::round(static_cast<int>(char_pressed / 5.0) / (time / 60.0));
-  wpm = static_cast<int>(char_pressed / 5.0) / (time / 60.0);
+  wpm = static_cast<int>(std::round((char_pressed / 5.0) / (time / 60.0)));
   printw("\nwpm:%d", wpm);
   refresh();
   // getch();
