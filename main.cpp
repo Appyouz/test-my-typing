@@ -1,3 +1,4 @@
+#include <cmath>
 #include <functional>
 #include <ncurses.h>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <chrono>
 #include <unistd.h>
 #include <stdio.h>
+#include <future>
 
 /*
  * TODO:
@@ -26,47 +28,61 @@
  * -(NOT POSSIBLE) Write two threads and call the use rinput thread to coutndown timer thread(TWO
  *   THREAD FUNCTIONS)
 * */
-
-void takeUserInput(int &ch, int &char_pressed){
-  ch = getch();
+bool countDown(int time);
+void takeUserInput(int &char_pressed){
+  int ch = getch();
+  float time = 10.0;
+  // int ch = getch();
 // if ((ch = getch()) != KEY_F(1)) {
   if(ch  != ERR){
     char_pressed++;
-    printw(" CHAR:%d", ch);
-    printw("\n");
-    // }
+    // printw(" CHAR:%d", ch);
+    printw(keyname(ch));
   }
+
 }
 
+bool countDown(int time){
+
+  while(time > 0){
+  // refresh();
+  // printw("COUNT:%d\n", time--);
+    time--;
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  return true;
+}
 
 
 int main(){
   initscr();
   cbreak();
-  int ch; 
   nodelay(stdscr, TRUE);
   keypad(stdscr, TRUE);
   noecho();
 
-  std::promise<int> prms;
-  std::future<int> ftr = prms.get_future();
   int time = 10;
   int char_pressed = 0;
   int count = time;
-
-  while(count > 0){
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::thread t (takeUserInput,std::ref(ch), std::ref(char_pressed));
+  std::future<bool> backgroundThread = std::async(std::launch::async,countDown,std::ref(time));
+  std::future_status status;
+while(true){
+    std::thread t (takeUserInput,std::ref(char_pressed));
     t.join();
-    printw("\nTIMER:%d", count--);
+    // takeUserInput(char_pressed);
+    status = backgroundThread.wait_for(std::chrono::milliseconds(50));
+    if(status == std::future_status::ready){
+      // std::cout << "TIMES UP";
+      printw("TIME IS UP");
+      break;
+    }
   }
-
-
   int wpm = 0;
+  // wpm = std::round(static_cast<int>(char_pressed / 5.0) / (time / 60.0));
   wpm = static_cast<int>(char_pressed / 5.0) / (time / 60.0);
   printw("\nwpm:%d", wpm);
   refresh();
-  getchar();
-  endwin();
+  // getch();
+  // endwin();
   return 0;
 }
