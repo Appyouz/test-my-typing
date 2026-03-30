@@ -18,7 +18,7 @@ manipulation using ncurses.
 
 1. Clone the repo: 
 ```
-git@github.com:Appyouz/test-my-typing.git
+git clone https://github.com/Appyouz/test-my-typing.git
 ```
  2. Create a directory `build` and change to it
  ```cd build/```
