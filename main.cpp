@@ -52,9 +52,16 @@ ch = getch();
 
 bool countDown(int time){
 
+  WINDOW *win = newwin(5, 10, 20, 5);
+  box(win, 0,0);
+  refresh();
   while(time > 0){
   // refresh();
   // printw("COUNT:%d\n", time--);
+    mvwprintw(win,1,1,"TIME: %d", time);
+    mvwdelch(win,1,5);
+  wrefresh(win);
+    // wgetch(win);
     time--;
   std::this_thread::sleep_for(std::chrono::seconds(1));
   }
