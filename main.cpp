@@ -26,8 +26,14 @@ ch = getch();
   if(i > n) return;
     if(ch != ERR){
     // {solved)TODO: logic for backspace and ch != lessonString[i]
-    if(ch == KEY_BACKSPACE){
+    if(ch == KEY_BACKSPACE && i > 0){
+      mvdelch(1,i);
       i--;
+      if(i == 0){
+        // or inside do check if char_deleted = char_pressed that is from lessonText
+        mvdelch(1, 0);
+        i = 0;
+      }
     }
       if(ch == lessonText[i]){
       ++char_pressed;
